@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <!-- Include jQuery and jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+    <h1>Trade Network</h1>
+    <form action="/app7_search" method="POST">
+        <!-- Input field for the source with autocomplete -->
+        <label for="source">Source:</label>
+        <input type="text" name="source" id="source" required>
+        
+      
+        
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Your existing content -->
+
+    <script>
+        $(document).ready(function () {
+            // Initialize autocomplete for source input
+            $("#source").autocomplete({
+                source: function (request, response) {
+                    // Make an AJAX request to fetch matching suggestions
+                    $.ajax({
+                        url: '/get_suggestions',  // Replace with your Flask route
+                        method: 'POST',
+                        data: { query: request.term },
+                        success: function (data) {
+                            response(data);  // Provide suggestions to the autocomplete
+                        }
+                    });
+                },
+                minLength: 1  // Minimum characters to trigger autocomplete
+            });
+
+            
+        });
+    </script>
+    
+    style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Trade Network Visualization</h1>
+    
+    <h2>Paths from {{ source }}:</h2>
+    
+    {% if all_paths %}
+    <table>
+        <tr>
+            <th>Path</th>
+        </tr>
+        {% for path in all_paths %}
+        <tr>
+            <td>{{ path|join(" -> ") }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>{{ error_message }}</p>
+    {% endif %}
+</body>
+</html>
+
